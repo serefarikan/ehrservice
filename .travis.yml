@@ -2,7 +2,7 @@ language: java
 
 branches:
   only:
-    - develop
+    - develop, develop_code4health
 
 before_install:
   - chmod +x install.sh
