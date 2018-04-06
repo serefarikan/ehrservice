@@ -31,6 +31,7 @@ import org.openehr.schemas.v1.OPERATIONALTEMPLATE;
 import se.acode.openehr.parser.ADLParser;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.time.ZoneId;
@@ -377,10 +378,9 @@ public class KnowledgeCache implements I_KnowledgeCache {
 
     @Override
     public String addOperationalTemplate(byte[] content) throws Exception {
+        String utf8XML = new String(content, StandardCharsets.UTF_8);
 
-        InputStream inputStream = new ByteArrayInputStream(content);
-
-        org.openehr.schemas.v1.TemplateDocument document = org.openehr.schemas.v1.TemplateDocument.Factory.parse(inputStream);
+        org.openehr.schemas.v1.TemplateDocument document = org.openehr.schemas.v1.TemplateDocument.Factory.parse(utf8XML);
         OPERATIONALTEMPLATE template = document.getTemplate();
 
         if (template == null)
@@ -403,7 +403,7 @@ public class KnowledgeCache implements I_KnowledgeCache {
         }
 
         try {
-            Files.write(path, content, StandardOpenOption.CREATE);
+            Files.write(path, utf8XML.getBytes(StandardCharsets.UTF_8), StandardOpenOption.CREATE);
         } catch (IOException e) {
             throw new IllegalArgumentException("Could not write file:"+filename+" in directory:"+optPath+", reason:"+e);
         }
